@@ -9,27 +9,40 @@ class App extends Component {
         super(props);
 
         this.state = {
-            films: [],
-            hasLoadedFilms: false
+            dataset: [],
+            hasLoadedFilms: false,
+            hasLoadedPeople: false
         }
     }
 
-    componentDidMount() {
-        fetch("https://ghibliapi.herokuapp.com/films")
-            .then(res => res.json())
-            .then(arr => this.setState({ films: arr }))
-            .catch(err => console.log(err));
+    componentDidUpdate(prevProps, prevState) {
+        if ((prevState.hasLoadedFilms !== this.state.hasLoadedFilms) || (prevState.hasLoadedPeople !== this.state.hasLoadedPeople)) {
+            let baseURL = "";
+            if (this.state.hasLoadedFilms) {
+                baseURL = "https://ghibliapi.herokuapp.com/films";
+            } else if (this.state.hasLoadedPeople) {
+                baseURL = "https://ghibliapi.herokuapp.com/people";
+            }
+            fetch(baseURL)
+                .then(res => res.json())
+                .then(arr => this.setState({ dataset: arr }))
+                .catch(err => console.log(err));
+        }
     }
 
-    handleButtonClick = () => {
-        this.setState({ hasLoadedFilms: !(this.hasLoadedFilms) });
+    handleFilmButtonClick = () => {
+        this.setState({ hasLoadedFilms: !(this.state.hasLoadedFilms) });
+    }
+
+    handlePeopleButtonClick = () => {
+        this.setState({ hasLoadedPeople: !(this.state.hasLoadedPeople) });
     }
 
     render() {
-        if (this.state.hasLoadedFilms) {
+        if (this.state.hasLoadedFilms || this.state.hasLoadedPeople) {
             return (
                 <div className="container">
-                    <Collection films={this.state.films} />
+                    <Collection data={this.state} />
                 </div>
             );
         } else {
@@ -38,15 +51,18 @@ class App extends Component {
                     <div className="p-3">
                         <img src={logo} alt="logo" />
                     </div>
-                    <button className="btn btn-info" 
-                        onClick={(() => this.handleButtonClick())}>Load Films
+                    <button className="btn btn-info m-1"
+                        onClick={(() => this.handleFilmButtonClick())}>Load Films
+                    </button>
+                    <button className="btn btn-danger m-1"
+                        onClick={(() => this.handlePeopleButtonClick())}>Load People
                     </button>
                 </div>
-                    );
-                }
-        
-        
-            }
+            );
         }
-        
+
+
+    }
+}
+
 export default App;

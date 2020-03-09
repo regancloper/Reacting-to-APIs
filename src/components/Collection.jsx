@@ -1,10 +1,10 @@
 import React from 'react';
-import Film from './Film'
+import Item from './Item'
 
 const Collection = (props) => {
-    let collection = props.films.map((film) => {
+    let collection = props.data.dataset.map((item) => {
         return (
-            <Film key={film.id} film={film} />
+            <Item key={item.id} item={item} dataType={props.data.hasLoadedFilms}/>
         );
     });
 
