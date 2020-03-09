@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import 'isomorphic-fetch';
 import 'es6-promise';
 import Collection from './components/Collection';
+import logo from './logo.png';
 
 class App extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            films: []
+            films: [],
+            hasLoadedFilms: false
         }
     }
 
@@ -19,14 +21,32 @@ class App extends Component {
             .catch(err => console.log(err));
     }
 
-    render() {
-        return (
-            <div className="container">
-                <Collection films={this.state.films} />
-            </div>
-
-        );
+    handleButtonClick = () => {
+        this.setState({ hasLoadedFilms: !(this.hasLoadedFilms) });
     }
-}
 
+    render() {
+        if (this.state.hasLoadedFilms) {
+            return (
+                <div className="container">
+                    <Collection films={this.state.films} />
+                </div>
+            );
+        } else {
+            return (
+                <div className="container">
+                    <div className="p-3">
+                        <img src={logo} alt="logo" />
+                    </div>
+                    <button className="btn btn-info" 
+                        onClick={(() => this.handleButtonClick())}>Load Films
+                    </button>
+                </div>
+                    );
+                }
+        
+        
+            }
+        }
+        
 export default App;
